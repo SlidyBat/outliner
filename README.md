@@ -7,11 +7,25 @@ signature of the function it was inlined from. During analysis the plugin
 replaces every match with a call to that function, so MLIL, HLIL and pseudo-C
 show the call instead of the inlined body.
 
+> [!WARNING]
+> This whole project is vibecoded: the code and documentation were written by
+> an AI coding assistant, with little of it reviewed by hand.
+
 ## Example
 
-libc++'s `std::string::data()`, as clang inlines it on arm64, tests the
-short-string flag in byte 0x17 and returns either the heap pointer or the
-object's own buffer. This pattern describes that code:
+This function prints a string with its size and capacity. Binary Ninja
+decompiles it with libc++'s string accessors inlined:
+
+![dump() before outlining: the strings' data, size and capacity are read from their representation inline](docs/images/before.png)
+
+With patterns for `data()`, `size()` and `capacity()`, the same function
+calls them instead:
+
+![dump() after outlining: calls to std::string::capacity, size and data](docs/images/after.png)
+
+The `data()` pattern looks like this. libc++'s `std::string::data()`, as
+clang inlines it on arm64, tests the short-string flag in byte 0x17 and
+returns either the heap pointer or the object's own buffer:
 
 ```
 signature: char const* `std::string::data`(`std::__1::string` const* s) __pure
