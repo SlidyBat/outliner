@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.DS_Store
+.claude/
+*.dSYM/
+target/
+
+# Local test material, kept out of the repository: sample programs, pattern
+# files, and the tests that replay them.
+/samples/
+/patterns/
+/crates/outliner-core/tests/local/
