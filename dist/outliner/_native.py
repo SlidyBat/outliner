@@ -66,7 +66,7 @@ def load() -> bool:
     if _lib is not None:
         return True
     if not os.path.exists(PATH):
-        _load_error = f"{PATH} is missing; build it with `cargo build --release -p outliner-plugin`"
+        _load_error = f"{PATH} is missing; build and install the plugin with `cargo xtask install`"
         log_error(f"Outliner: {_load_error}", LOGGER)
         return False
     try:

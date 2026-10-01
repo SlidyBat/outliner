@@ -54,8 +54,14 @@ pattern language is described in [docs/patterns.md](docs/patterns.md).
 ## Building
 
 ```bash
-cargo build --release -p outliner-plugin
+cargo xtask package
 ```
+
+This builds the plugin in release mode and assembles it in `target/outliner`:
+the library and the Python package that loads it (`dist/outliner`). That
+folder is the whole plugin, ready to copy into Binary Ninja's plugins folder
+or to archive for distribution. Arguments after `package` are passed to
+`cargo build`, such as `--offline`.
 
 The build links against the Binary Ninja installation recorded in Binary
 Ninja's `lastrun` file. Set `BINARYNINJADIR` to use a different one.
@@ -64,7 +70,7 @@ Ninja's `lastrun` file. Set `BINARYNINJADIR` to use a different one.
 [binaryninja-api](https://github.com/Vector35/binaryninja-api) commit whose
 core ABI matches Binary Ninja 6.1. For another version, change `rev` to the
 matching commit, or build against a local checkout by adding this to
-`.cargo/config.toml`:
+`~/.cargo/config.toml` (or to the repository's `.cargo/config.toml`):
 
 ```toml
 [patch."https://github.com/Vector35/binaryninja-api.git"]
@@ -77,19 +83,22 @@ headers (`clang` and `libclang-dev`), or set
 
 ## Installing
 
-Binary Ninja loads native plugins only from the top level of its plugins
-folder, so the plugin is installed as a folder holding the library and the
-Python package in `dist/outliner`, which loads it. Copy the library and the
-contents of `dist/outliner` into `outliner/` in the plugins folder. On macOS:
-
 ```bash
-mkdir -p ~/Library/Application\ Support/Binary\ Ninja/plugins/outliner
-cp target/release/liboutliner.dylib dist/outliner/* ~/Library/Application\ Support/Binary\ Ninja/plugins/outliner/
+cargo xtask install
 ```
 
-The plugins folder is `~/.binaryninja/plugins` on Linux (library
-`liboutliner.so`) and `%APPDATA%\Binary Ninja\plugins` on Windows
-(`outliner.dll`). Restart Binary Ninja after installing.
+This packages the plugin and copies `target/outliner` into Binary Ninja's
+plugins folder as `outliner/`. The plugins folder is
+`~/Library/Application Support/Binary Ninja/plugins` on macOS,
+`~/.binaryninja/plugins` on Linux and `%APPDATA%\Binary Ninja\plugins` on
+Windows, or the `plugins` folder of `BN_USER_DIRECTORY` when that is set.
+Pass `--plugins-dir DIR` to install somewhere else. Restart Binary Ninja
+after installing.
+
+To install by hand, copy the `target/outliner` folder into the plugins folder.
+It has to stay a folder: Binary Ninja loads native plugins only from the top
+level of its plugins folder, and the Python package in it loads the library
+from the folder instead.
 
 ## Usage
 

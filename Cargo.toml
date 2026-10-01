@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["crates/outliner-core", "crates/outliner-plugin"]
+members = ["crates/outliner-core", "crates/outliner-plugin", "xtask"]
 
 [workspace.package]
 version = "0.2.0"
